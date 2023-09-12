@@ -122,6 +122,12 @@ namespace MyAutoCADCommands
 
         }
 
+        [CommandMethod("LIDocumentCount")] public void cmdDocCount()
+        {
+            Editor ed = Application.DocumentManager.MdiActiveDocument.Editor;
+            ed.WriteMessage("\nThere are " + Application.DocumentManager.Count + " drawings opened.");
+        }
+
         #endregion
 
         #region SupportFunctions
