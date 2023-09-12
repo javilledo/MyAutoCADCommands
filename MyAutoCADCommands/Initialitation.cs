@@ -68,7 +68,59 @@ namespace MyAutoCADCommands
             ed.WriteMessage("\n" + logName.Substring(0, firstL) + " " + logName.Substring(firstL));
 
         }
-        
+
+        [CommandMethod("LILoops")] public void cmdLoops()
+        {
+            Editor ed = Application.DocumentManager.MdiActiveDocument.Editor;
+
+            int[] arr = new int[5];
+            arr[0] = 10;
+            arr[1] = 9;
+            arr[2] = 8;
+            arr[3] = 7;
+            arr[4] = 6;
+
+            foreach(int iObj in arr)
+            {
+                ed.WriteMessage("\n" + iObj);
+            }
+            ed.WriteMessage("\nEnd of first loop\n");
+
+            for (int i = arr.Length -  1; i >= 0; i--)
+            {
+                try
+                {
+                    if(i == 3)
+                    {
+                        throw new Autodesk.AutoCAD.Runtime.Exception(ErrorStatus.AnonymousEntry, "7 is not an acceptable number");
+                    }
+                    else
+                    {
+                        ed.WriteMessage("\n" + arr[i]);
+                    }
+                }
+                catch (Autodesk.AutoCAD.Runtime.Exception ex)
+                {
+                    Application.ShowAlertDialog("Error in LILoops > Backwards Array Loop \n" + ex.Message);
+                }
+                //ed.WriteMessage("\n" + arr[i]);
+            }
+            ed.WriteMessage("\nEnd of second loop\n");
+
+            List<int> iList = new List<int>();
+            iList.Add(1);
+            iList.Add(2);
+            iList.Add(3);
+            iList.Add(4);
+            iList.Add(5);
+
+            foreach(int iObj in iList)
+            {
+                ed.WriteMessage("\n" + iObj);
+            }
+
+        }
+
         #endregion
 
         #region SupportFunctions
