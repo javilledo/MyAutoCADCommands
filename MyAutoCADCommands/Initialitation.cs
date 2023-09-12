@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Autodesk.AutoCAD.Runtime;
 using Autodesk.AutoCAD.EditorInput;
 using Autodesk.AutoCAD.ApplicationServices;
+using System.Reflection;
 
 namespace MyAutoCADCommands
 {
@@ -148,7 +149,13 @@ namespace MyAutoCADCommands
         #region Initialization
         void IExtensionApplication.Initialize()
         {
+            Application.MainWindow.Text = "My Application";
 
+            Editor ed = Application.DocumentManager.MdiActiveDocument.Editor;
+            AssemblyName appName = Assembly.GetExecutingAssembly().GetName();
+
+            object[] attrs = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyTitleAttribute), false);
+            ed.WriteMessage(((AssemblyTitleAttribute)attrs[0]).Title + " " + appName.Version.Major.ToString() + " is loaded...");
         }
 
         void IExtensionApplication.Terminate()
