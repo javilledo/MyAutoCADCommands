@@ -134,6 +134,13 @@ namespace MyAutoCADCommands
             acDoc.Editor.WriteMessage("\n" + acDoc.Name);
         }
 
+        [CommandMethod("LINewDocument")] public void cmdNewDoc()
+        {
+            DocumentCollection docCol = Application.DocumentManager;
+            Document newDoc = docCol.Add("C:/Users/javil/AppData/Local/Autodesk/C3D 2024/esp/Template/_Autodesk Civil 3D (Metric) NCS.dwt");
+            docCol.MdiActiveDocument = newDoc;
+        }
+
         #endregion
 
         #region SupportFunctions
