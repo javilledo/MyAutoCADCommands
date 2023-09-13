@@ -128,6 +128,12 @@ namespace MyAutoCADCommands
             ed.WriteMessage("\nThere are " + Application.DocumentManager.Count + " drawings opened.");
         }
 
+        [CommandMethod("LIDocumentProperties")] public void cmdDocProp()
+        {
+            Document acDoc = Application.DocumentManager.MdiActiveDocument;
+            acDoc.Editor.WriteMessage("\n" + acDoc.Name);
+        }
+
         #endregion
 
         #region SupportFunctions
