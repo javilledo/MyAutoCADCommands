@@ -174,6 +174,28 @@ namespace MyAutoCADCommands
             ed.WriteMessage("\nThere are " + cntr + " layers in the drawing.");
         }
 
+        [CommandMethod("LICreateLayer")] public void cmdCreateLayer()
+        {
+            Editor ed = Application.DocumentManager.MdiActiveDocument.Editor;
+            Database db = HostApplicationServices.WorkingDatabase;
+            ObjectId lyrTblId = db.LayerTableId;
+            Transaction trans = db.TransactionManager.StartTransaction();
+
+            try
+            {
+                LayerTable lyrTbl = trans.GetObject(lyrTblId, OpenMode.ForWrite) as LayerTable;
+                string lyrName = "MyNewLayer";
+                LayerTableRecord lyrTblRec = new LayerTableRecord();
+                lyrTblRec.Name = lyrName;
+                lyrTbl.Add(lyrTblRec);
+                trans.AddNewlyCreatedDBObject(lyrTblRec, true);
+            }
+            catch(Autodesk.AutoCAD.Runtime.Exception ex)
+            {
+                Application.ShowAlertDialog("Error in creating layer\n" + ex.Message);
+            }
+        }
+
         #endregion
 
         #region SupportFunctions
