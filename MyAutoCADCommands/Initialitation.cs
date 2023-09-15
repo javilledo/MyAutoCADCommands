@@ -185,10 +185,17 @@ namespace MyAutoCADCommands
             {
                 LayerTable lyrTbl = trans.GetObject(lyrTblId, OpenMode.ForWrite) as LayerTable;
                 string lyrName = "MyNewLayer";
-                LayerTableRecord lyrTblRec = new LayerTableRecord();
-                lyrTblRec.Name = lyrName;
-                lyrTbl.Add(lyrTblRec);
-                trans.AddNewlyCreatedDBObject(lyrTblRec, true);
+                if (IsLayerExists(trans, lyrTbl, lyrName) == false)
+                {
+                    LayerTableRecord lyrTblRec = new LayerTableRecord();
+                    lyrTblRec.Name = lyrName;
+                    lyrTbl.Add(lyrTblRec);
+                    trans.AddNewlyCreatedDBObject(lyrTblRec, true);
+                } else
+                {
+                    ed.WriteMessage("\nLayer " + lyrName + " already exists in the drawing");
+                }
+
             }
             catch(Autodesk.AutoCAD.Runtime.Exception ex)
             {
@@ -211,6 +218,17 @@ namespace MyAutoCADCommands
             {
                 return false;
             }
+        }
+
+        private Boolean IsLayerExists(Transaction CurrentTransaction, LayerTable Layers, String LayerName)
+        {
+            LayerTableRecord lyrObj;
+            foreach(ObjectId lyrId in Layers)
+            {
+                lyrObj = CurrentTransaction.GetObject(lyrId, OpenMode.ForRead) as LayerTableRecord;
+                if(lyrObj.Name == LayerName) return true;
+            }
+            return false;
         }
 
         private void AnotherConditionMethod()
