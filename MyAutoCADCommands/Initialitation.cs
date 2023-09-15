@@ -7,6 +7,7 @@ using Autodesk.AutoCAD.Runtime;
 using Autodesk.AutoCAD.EditorInput;
 using Autodesk.AutoCAD.ApplicationServices;
 using System.Reflection;
+using Autodesk.AutoCAD.DatabaseServices;
 
 namespace MyAutoCADCommands
 {
@@ -139,6 +140,12 @@ namespace MyAutoCADCommands
             DocumentCollection docCol = Application.DocumentManager;
             Document newDoc = docCol.Add("C:/Users/javil/AppData/Local/Autodesk/C3D 2024/esp/Template/_Autodesk Civil 3D (Metric) NCS.dwt");
             docCol.MdiActiveDocument = newDoc;
+        }
+
+        [CommandMethod("LIDBProps")] public void cmdDBProps()
+        {
+            Database db = Application.DocumentManager.MdiActiveDocument.Database;
+            db.Ltscale = 48;  
         }
 
         #endregion
