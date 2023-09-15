@@ -148,6 +148,15 @@ namespace MyAutoCADCommands
             db.Ltscale = 48;  
         }
 
+        [CommandMethod("LIObjectID")]
+        public void cmdDBObjID()
+        {
+            Database db = HostApplicationServices.WorkingDatabase;
+            //Database dbAcad = Application.DocumentManager.MdiActiveDocument.Database;
+            ObjectId lyrTblId = db.LayerTableId;
+            Boolean testIsErased = lyrTblId.IsErased;
+        }
+
         #endregion
 
         #region SupportFunctions
