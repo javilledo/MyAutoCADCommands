@@ -148,13 +148,30 @@ namespace MyAutoCADCommands
             db.Ltscale = 48;  
         }
 
-        [CommandMethod("LIObjectID")]
-        public void cmdDBObjID()
+        [CommandMethod("LIObjectID")] public void cmdDBObjID()
         {
             Database db = HostApplicationServices.WorkingDatabase;
             //Database dbAcad = Application.DocumentManager.MdiActiveDocument.Database;
             ObjectId lyrTblId = db.LayerTableId;
             Boolean testIsErased = lyrTblId.IsErased;
+        }
+
+        [CommandMethod("LITransactions")] public void cmmdDBTrans()
+        {
+            Editor ed = Application.DocumentManager.MdiActiveDocument.Editor;
+            Database db = HostApplicationServices.WorkingDatabase;
+            ObjectId lyrTblId = db.LayerTableId;
+
+            Transaction trans = db.TransactionManager.StartTransaction();
+            LayerTable lyrTbl = trans.GetObject(lyrTblId, OpenMode.ForRead) as LayerTable;
+            
+            Int16 cntr = 0;
+            foreach(ObjectId lyrId in lyrTbl) {
+                cntr += 1;
+            }
+            trans.Commit();
+
+            ed.WriteMessage("\nThere are " + cntr + " layers in the drawing.");
         }
 
         #endregion
