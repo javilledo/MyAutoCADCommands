@@ -228,6 +228,27 @@ namespace MyAutoCADCommands
             trans.Commit();
         }
 
+        [CommandMethod("LIGetPoint")] public void cmdEdGetPoint()
+        {
+            Editor ed = Application.DocumentManager.MdiActiveDocument.Editor;
+
+            PromptPointOptions prPtOpts = new PromptPointOptions("\nPinck a point: ");
+            prPtOpts.AllowArbitraryInput = false;
+            prPtOpts.AllowNone = true;
+
+            PromptPointResult prPtRes1 = ed.GetPoint(prPtOpts);
+            if (prPtRes1.Status == PromptStatus.OK) return;
+
+            prPtOpts.BasePoint = prPtRes1.Value;
+            prPtOpts.UseBasePoint = true;
+
+            PromptPointResult prPtRes2 = ed.GetPoint(prPtOpts);
+            if (prPtRes2.Status != PromptStatus.OK) return;
+
+            ed.WriteMessage("\nPoint 1 = " + prPtRes1.Value.ToString() + "\nPoint 2 = " + prPtRes2.Value.ToString());
+
+        }
+
         #endregion
 
         #region SupportFunctions
