@@ -8,6 +8,7 @@ using Autodesk.AutoCAD.EditorInput;
 using Autodesk.AutoCAD.ApplicationServices;
 using System.Reflection;
 using Autodesk.AutoCAD.DatabaseServices;
+using Autodesk.AutoCAD.Geometry;
 
 namespace MyAutoCADCommands
 {
@@ -203,6 +204,30 @@ namespace MyAutoCADCommands
             }
         }
 
+        [CommandMethod("LICreateLine")] public void cmdCreateLine()
+         {
+            Database db = HostApplicationServices.WorkingDatabase;
+            Transaction trans = db.TransactionManager.StartTransaction();
+
+            try
+            {
+
+                ObjectId blkId = db.CurrentSpaceId;
+                BlockTableRecord curSpaceBlk = trans.GetObject(blkId, OpenMode.ForWrite) as BlockTableRecord;
+                Point3d pnt1 = new Point3d(0, 0, 0);
+                Point3d pnt2 = new Point3d(10, 10, 0);
+                Line lineObj = new Line(pnt1, pnt2);
+                curSpaceBlk.AppendEntity(lineObj);
+                trans.AddNewlyCreatedDBObject(lineObj, true);
+            }
+            catch (Autodesk.AutoCAD.Runtime.Exception ex)
+            {
+                Application.ShowAlertDialog("Error in creating line\n" + ex.Message);
+            }
+
+            trans.Commit();
+        }
+
         #endregion
 
         #region SupportFunctions
@@ -256,7 +281,6 @@ namespace MyAutoCADCommands
         }
 
         #endregion
-
 
     }
 }
