@@ -249,6 +249,27 @@ namespace MyAutoCADCommands
 
         }
 
+        [CommandMethod("LIGetDistance")] public void cmdEdGetDistance()
+        {
+            Editor ed = Application.DocumentManager.MdiActiveDocument.Editor;
+            Database db = HostApplicationServices.WorkingDatabase;
+
+            PromptDistanceOptions prDistOpts = new PromptDistanceOptions("\nSpecify a distance: ");
+            prDistOpts.AllowArbitraryInput = false;
+            prDistOpts.AllowNegative = false;
+            prDistOpts.AllowNone = true;
+            prDistOpts.AllowZero = false;
+            prDistOpts.DefaultValue = 1;
+            prDistOpts.Only2d = true;
+            prDistOpts.UseDefaultValue = true;
+
+            PromptDoubleResult prDistRes = ed.GetDistance(prDistOpts);
+            if(prDistRes.Status != PromptStatus.OK) return;
+
+            ed.WriteMessage("\nDistance is " + Math.Round(prDistRes.Value,db.Luprec, MidpointRounding.AwayFromZero));
+
+        }
+
         #endregion
 
         #region SupportFunctions
