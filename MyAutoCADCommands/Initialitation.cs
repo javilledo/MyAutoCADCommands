@@ -420,7 +420,7 @@ namespace MyAutoCADCommands
         {
             Objects.BaseObject bObj = new Objects.BaseObject();
             bObj.Name = "LinkedIn";
-            bObj.baseId = new ObjectId();
+            bObj.BaseId = new ObjectId();
             bObj.isSelected = true;
 
         }
@@ -429,7 +429,7 @@ namespace MyAutoCADCommands
         {
             Objects.LayerObject bObj = new Objects.LayerObject();
             bObj.Name = "LinkedIn";
-            bObj.baseId = new ObjectId();
+            bObj.BaseId = new ObjectId();
             bObj.isSelected = true;
             bObj.isFrozen = true;
         }
@@ -438,9 +438,75 @@ namespace MyAutoCADCommands
         {
             Editor ed = Application.DocumentManager.MdiActiveDocument.Editor;
 
-            ed.WriteMessage("\nCurrent layer is " + Objects.LayerObjectcollection.GetCurrentLayerName());
+            ed.WriteMessage("\nCurrent layer is " + Objects.LayerObjectCollection.GetCurrentLayerName());
         }
 
+        [CommandMethod("LIShowWindowsWithLayers")] public void cmdShowWindowWithLayers()
+        {
+            Objects.LayerObjectCollection lyrs = new Objects.LayerObjectCollection();
+            lyrs.GetFromDrawingDatabase(false, null);
+
+            Windows.winLayerList win = new Windows.winLayerList(lyrs);
+            Application.ShowModalWindow(Application.MainWindow.Handle, win);
+        }
+
+        [CommandMethod("LIListLayers")] public void cmdListLayers()
+        {
+            Objects.LayerObjectCollection lyrs = new Objects.LayerObjectCollection();
+            lyrs.GetFromDrawingDatabase(false, null);
+
+            Editor ed = Application.DocumentManager.MdiActiveDocument.Editor;
+
+            Windows.winLayerList win = new Windows.winLayerList(lyrs);
+
+            Application.ShowModalWindow(Application.MainWindow.Handle, win);
+
+            if (Application.ShowModalWindow(Application.MainWindow.Handle, win) == false) return;
+            Objects.LayerObject lyr = win.cboLayers.SelectedItem as Objects.LayerObject;
+
+            ed.WriteMessage("\nYou selected " + lyr.Name);
+        }
+
+        [CommandMethod("LILyrObject")] public void cmdLyrObject()
+        {
+            Editor ed = Application.DocumentManager.MdiActiveDocument.Editor;
+
+            PromptSelectionOptions prSelOpts = new PromptSelectionOptions();
+            prSelOpts.AllowDuplicates = false;
+            prSelOpts.MessageForAdding = "\nSelect objects to change layer: ";
+            prSelOpts.MessageForRemoval = "\nRemoves objects from selection: ";
+            prSelOpts.RejectObjectsFromNonCurrentSpace = true;
+            prSelOpts.RejectObjectsOnLockedLayers = true;
+            prSelOpts.RejectPaperspaceViewport = true;
+
+            PromptSelectionResult prSelRes = ed.GetSelection(prSelOpts);
+            if (prSelRes.Status != PromptStatus.OK) return;
+
+            Objects.LayerObjectCollection lyrs = new Objects.LayerObjectCollection();
+            lyrs.GetFromDrawingDatabase(false, null);
+
+            Windows.winLayerList win = new Windows.winLayerList(lyrs);
+
+            if (Application.ShowModalWindow(Application.MainWindow.Handle, win) == false) return;
+
+            Objects.LayerObject lyr = win.cboLayers.SelectedItem as Objects.LayerObject;
+
+            Database db = HostApplicationServices.WorkingDatabase;
+            Transaction trans = db.TransactionManager.StartTransaction();
+
+            Entity ent;
+
+            foreach (SelectedObject selObj in prSelRes.Value)
+            {
+                ent = trans.GetObject(selObj.ObjectId, OpenMode.ForWrite) as Entity;
+                ent.LayerId = lyr.BaseId;
+
+            }
+
+            trans.Commit();
+
+            ed.WriteMessage("\n" + prSelRes.Value.Count + " objects assigned to " + lyr.Name);
+        }
         #endregion
     }
 }

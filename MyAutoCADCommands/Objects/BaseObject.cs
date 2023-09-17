@@ -7,7 +7,7 @@ using Autodesk.AutoCAD.DatabaseServices;
 
 namespace Objects
 {
-    class BaseObject
+    public class BaseObject
     {
         private string _bName = "";
         public string Name 
@@ -25,7 +25,7 @@ namespace Objects
         }
 
         private ObjectId _objId = ObjectId.Null;
-        public ObjectId baseId 
+        public ObjectId BaseId 
         { 
             get
             {

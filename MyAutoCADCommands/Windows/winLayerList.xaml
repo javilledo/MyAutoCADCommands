@@ -1,0 +1,33 @@
+﻿<Window x:Class="MyAutoCADCommands.Windows.winLayerList"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MyAutoCADCommands.Windows" xmlns:objects="clr-namespace:Objects" 
+        mc:Ignorable="d"
+        Title="Windows Layer List" Height="110" Width="300" ShowInTaskbar="False" ResizeMode="NoResize" WindowStartupLocation="CenterOwner">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="32"/>
+        </Grid.RowDefinitions>
+        <Grid Margin="4">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="75"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="30"/>
+            </Grid.RowDefinitions>
+            <TextBlock VerticalAlignment="Center" Text="Select Layer"/>
+            <ComboBox Name="cboLayers" Grid.Column="1" VerticalAlignment="Center" ItemsSource="{Binding}" DisplayMemberPath="Name" SelectedValuePath="BaseId"/>
+        </Grid>
+        <StackPanel HorizontalAlignment="Right" Orientation="Horizontal" Grid.Row="1">
+            <Button Name="btnOk" Width="76" Margin="4" Content="Ok" IsDefault="True" Click="btnOk_Click"/>
+            <Button Name="btnCancel" Width="76" Margin="4" Content="Cancel" IsCancel="True" Click="btnCancel_Click"/>
+        </StackPanel>
+    </Grid>
+
+</Window>
+
+

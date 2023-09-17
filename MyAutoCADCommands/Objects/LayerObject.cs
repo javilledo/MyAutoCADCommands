@@ -4,10 +4,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace Objects
 {
-    class LayerObject: BaseObject
+    public class LayerObject: BaseObject
     {
         private Boolean _isFrozen = false;
         public Boolean isFrozen
@@ -23,8 +24,39 @@ namespace Objects
         }
     }
 
-    class LayerObjectcollection : System.Collections.ObjectModel.ObservableCollection<LayerObject>
+    public class LayerObjectCollection : System.Collections.ObjectModel.ObservableCollection<LayerObject>
     {
+        public void GetFromDrawingDatabase(Boolean IncludeReferences, Database DrawingDatabase = null)
+        {
+            if(DrawingDatabase == null)
+            {
+                DrawingDatabase = HostApplicationServices.WorkingDatabase;
+            }
+            Transaction trans = DrawingDatabase.TransactionManager.StartTransaction();
+
+            try
+            {
+                LayerTable lyrTbl = trans.GetObject(DrawingDatabase.LayerTableId, OpenMode.ForRead) as LayerTable;
+                LayerTableRecord lyrTblRec;
+                LayerObject lyrObj;
+                foreach(ObjectId lyrId in lyrTbl)
+                {
+                    lyrTblRec = trans.GetObject(lyrId, OpenMode.ForRead) as LayerTableRecord;
+                    if (((lyrTblRec.Name.Contains("|") == true) && (IncludeReferences == false))) continue;
+
+                    lyrObj = new LayerObject();
+                    lyrObj.BaseId = lyrId;
+                    lyrObj.isFrozen = lyrTblRec.IsFrozen;
+                    lyrObj.Name = lyrTblRec.Name;
+                    this.Add(lyrObj);
+                }
+            }
+            catch
+            {
+                
+            }
+            trans.Commit();
+        }
         public static string GetCurrentLayerName()
         {
             string retLayerName = "";
