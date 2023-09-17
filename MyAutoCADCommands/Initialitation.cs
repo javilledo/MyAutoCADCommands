@@ -270,6 +270,28 @@ namespace MyAutoCADCommands
 
         }
 
+        [CommandMethod("LIGetEntityDistance")] public void cmdEdGetEntityDist()
+        {
+            Editor ed = Application.DocumentManager.MdiActiveDocument.Editor;
+            Database db = HostApplicationServices.WorkingDatabase;
+
+            PromptEntityOptions prEntOpts = new PromptEntityOptions("\nSelect a line: ");
+            prEntOpts.AllowNone = true;
+            prEntOpts.AllowObjectOnLockedLayer = true;
+            prEntOpts.SetRejectMessage("\nSelected object has to be a line.");
+            prEntOpts.AddAllowedClass(typeof(Line), true);
+
+            PromptEntityResult prEntRes = ed.GetEntity(prEntOpts);
+            if (prEntRes.Status != PromptStatus.OK) return;
+
+            Transaction trans = db.TransactionManager.StartTransaction();
+            Line lineObj = trans.GetObject(prEntRes.ObjectId, OpenMode.ForRead) as Line;
+            ed.WriteMessage("\nSelected line lenght is " + Math.Round(lineObj.Length, db.Luprec, MidpointRounding.AwayFromZero));
+
+            trans.Commit();
+
+        }
+
         #endregion
 
         #region SupportFunctions
