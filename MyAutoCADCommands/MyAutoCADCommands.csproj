@@ -80,7 +80,9 @@
   <ItemGroup>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Objects\BaseObject.cs" />
     <Compile Include="Initialitation.cs" />
+    <Compile Include="Objects\LayerObject.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

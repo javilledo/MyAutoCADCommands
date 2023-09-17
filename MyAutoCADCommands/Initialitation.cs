@@ -333,6 +333,34 @@ namespace MyAutoCADCommands
 
         }
 
+        [CommandMethod("LIGetDistance2")] public void cmdEdGetDistance2()
+        {
+            Editor ed = Application.DocumentManager.MdiActiveDocument.Editor;
+            Database db = HostApplicationServices.WorkingDatabase;
+
+            PromptDistanceOptions prDistOpts = new PromptDistanceOptions("\nSpecify a distance: ");
+            prDistOpts.AllowArbitraryInput = false;
+            prDistOpts.AllowNegative = false;
+            prDistOpts.AllowNone = true;
+            prDistOpts.AllowZero = false;
+            prDistOpts.DefaultValue = 1;
+            prDistOpts.Only2d = true;
+            prDistOpts.UseDefaultValue = true;
+            prDistOpts.Keywords.Add("No");
+            prDistOpts.Keywords.Add("Yes");
+
+            PromptDoubleResult prDistRes = ed.GetDistance(prDistOpts);
+            if (prDistRes.Status == PromptStatus.Keyword)
+            {
+                ed.WriteMessage("\nKeyword entered is " + prDistRes.StringResult);
+            }
+            else if (prDistRes.Status == PromptStatus.OK)
+            {
+                ed.WriteMessage("\nDistance is " + Math.Round(prDistRes.Value, db.Luprec, MidpointRounding.AwayFromZero));
+            }
+
+        }
+
         #endregion
 
         #region SupportFunctions
@@ -387,5 +415,32 @@ namespace MyAutoCADCommands
 
         #endregion
 
+        #region Commands        
+        [CommandMethod("LIObject")] public void cmdObject()
+        {
+            Objects.BaseObject bObj = new Objects.BaseObject();
+            bObj.Name = "LinkedIn";
+            bObj.baseId = new ObjectId();
+            bObj.isSelected = true;
+
+        }
+
+        [CommandMethod("LILayerObject")] public void cmdLayerObject()
+        {
+            Objects.LayerObject bObj = new Objects.LayerObject();
+            bObj.Name = "LinkedIn";
+            bObj.baseId = new ObjectId();
+            bObj.isSelected = true;
+            bObj.isFrozen = true;
+        }
+
+        [CommandMethod("LIGetLayerObjectName")] public void cmdGetLayerObjectName()
+        {
+            Editor ed = Application.DocumentManager.MdiActiveDocument.Editor;
+
+            ed.WriteMessage("\nCurrent layer is " + Objects.LayerObjectcollection.GetCurrentLayerName());
+        }
+
+        #endregion
     }
 }
