@@ -292,6 +292,47 @@ namespace MyAutoCADCommands
 
         }
 
+        [CommandMethod("LISelectSet")] public void cmdEdSelectSet()
+        {
+            Editor ed = Application.DocumentManager.MdiActiveDocument.Editor;
+            Database db = HostApplicationServices.WorkingDatabase;
+
+            PromptSelectionOptions prSelOpts = new PromptSelectionOptions();
+            prSelOpts.AllowDuplicates = false;
+            prSelOpts.MessageForAdding = "\nSelect lines to measure";
+            prSelOpts.MessageForRemoval = "\nSelect lines to remove from selection: ";
+            prSelOpts.RejectObjectsFromNonCurrentSpace = false;
+            prSelOpts.RejectObjectsOnLockedLayers = true;
+            prSelOpts.RejectPaperspaceViewport = true;
+
+            TypedValue[] tValues = new TypedValue[1];
+            tValues[0] = new TypedValue((int)DxfCode.Start, "LINE");
+            SelectionFilter selFil = new SelectionFilter(tValues);
+
+            PromptSelectionResult prSelRes = ed.GetSelection(prSelOpts, selFil);
+            if (prSelRes.Status != PromptStatus.OK) return;
+               
+            Transaction trans = db.TransactionManager.StartTransaction();
+
+            try
+            {
+                SelectionSet selSet = prSelRes.Value;
+                Line lineObj;
+                double lenTotal = 0.0;
+                foreach(SelectedObject selObj in selSet)
+                {
+                    lineObj = trans.GetObject(selObj.ObjectId, OpenMode.ForRead) as Line;
+                    lenTotal += lineObj.Length;
+                }
+                ed.WriteMessage("\nTotal lenght of selected objects is " + Math.Round(lenTotal, db.Luprec, MidpointRounding.AwayFromZero));
+            }
+            catch(Autodesk.AutoCAD.Runtime.Exception ex)
+            {
+                Application.ShowAlertDialog("\nError in reading selection set\n" + ex.Message);
+            }
+
+        }
+
         #endregion
 
         #region SupportFunctions
